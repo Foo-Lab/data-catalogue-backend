@@ -7,17 +7,15 @@ const Organism = require('./organism.model.js');
 const Experiment = require('./experiment.model.js');
 const SampleFile = require('./sampleFile.model.js');
 const SequencingProvider = require('./sequencingProvider.model.js');
-const Seqeuncer = require('./seqeuncer.model.js');
+const Sequencer = require('./sequencer.model.js');
 const SequencingType = require('./sequencingType.model.js');
-
-const SampleFile = require('./sampleFile.model.js');
 
 const Sample = db.define('Sample', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        //do i put the ref to sample_files?
+
     },
     user_id: {
         type: DataTypes.INTEGER,
@@ -83,13 +81,17 @@ const Sample = db.define('Sample', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Seqeuncer,
+            model: Sequencer,
             key : 'id',
         },
     },
     sequencing_provider_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: SequencingProvider,
+            key : 'id', 
+        },
     },
     SRA: {
         type: DataTypes.STRING(10),

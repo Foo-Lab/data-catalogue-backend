@@ -10,16 +10,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // routes
 app.get('/', (req, res) => res.send('test'));
-require('./routes/users.routes.js')(app);
-require('./routes/statuses.routes.js')(app);
-require('./routes/organisms.routes.js')(app);
-require('./routes/sequencing_types.routes.js')(app);
-require('./routes/sequences.routes.js')(app);
-require('./routes/sequencing_providers.routes.js')(app);
-require('./routes/file_types.routes.js')(app);
-require('./routes/sample_files.routes.js')(app);
-require('./routes/experiments.routes.js')(app);
-require('./routes/samples.routes.js')(app);
+require('./routes/user.routes.js')(app);
+require('./routes/status.routes.js')(app);
+require('./routes/organism.routes.js')(app);
+require('./routes/sequencingType.routes.js')(app);
+require('./routes/sequencer.routes.js')(app);
+require('./routes/sequencingProvider.routes.js')(app);
+require('./routes/fileType.routes.js')(app);
+require('./routes/sampleFile.routes.js')(app);
+require('./routes/experiment.routes.js')(app);
+require('./routes/sample.routes.js')(app);
 
 
 const port = process.env.PORT || 5000;

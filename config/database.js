@@ -9,7 +9,7 @@ const database = new Sequelize(
         port: process.env.DB_PORT,
         dialect: 'mysql',
         define: {
-            timestamps: false
+            underscored : true
         }
     }
 );
