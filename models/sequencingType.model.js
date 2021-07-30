@@ -11,14 +11,7 @@ const SequencingType = db.define('SequencingType', {
         type: DataTypes.STRING(25),
         allowNull: false,
     },
-    updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
+ 
 });
 
 module.exports = SequencingType;

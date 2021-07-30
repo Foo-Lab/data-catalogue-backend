@@ -101,14 +101,7 @@ const Sample = db.define('Sample', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
+
 });
 
 module.exports = Sample;

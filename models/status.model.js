@@ -11,14 +11,7 @@ const Status = db.define('Status', {
         type: DataTypes.STRING(50),
         allowNull: false,
     },
-    updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
+
 });
 
 module.exports = Status;

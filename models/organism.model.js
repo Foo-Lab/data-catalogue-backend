@@ -11,14 +11,7 @@ const Organism = db.define('Organism', {
         type: DataTypes.STRING(15),
         allowNull: false,
     },
-    updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
+
 });
 
 module.exports = Organism;

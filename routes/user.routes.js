@@ -7,4 +7,5 @@ module.exports = (app) => {
     app.get('/user/:id', user.findOne);
     app.put('/user/:id', user.update);
     app.delete('/user/:id', user.remove);
+    app.post('/user/login', user.login);
 };

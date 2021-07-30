@@ -33,14 +33,6 @@ const Experiment = db.define('Experiment', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
 });
 
 module.exports = Experiment;
