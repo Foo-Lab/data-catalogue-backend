@@ -3,16 +3,16 @@ const crypto = require('crypto');
 
 
 const create = async (req, res) => {
-    const { name, username, email, hash, is_admin } = req.body;
-    if (!(name && username && email && hash && is_admin )) {
+    const { name, username, email, password, is_admin } = req.body;
+    if (!(name && username && email && password && is_admin )) {
         return res.status(400).send({
-            message: 'name, username, email, hash, is_admin required.'
+            message: 'name, username, email, password, is_admin required.'
         });
     }
 
     try {
         const usr = await User.create({
-            name, username, email, hash, is_admin
+            name, username, email, password, is_admin
         });
         return res.send(usr)
     } catch (error) {
@@ -106,11 +106,11 @@ const remove = async (req, res) => {
 
 
 const login = async (req, res) => {
-    const { username, hash } = req.body; /* put salt here but i know its wrong or at line 123*/
+    const { username, password } = req.body; /* put salt here but i know its wrong or at line 123*/
     
-    if (! (username && hash)) {
+    if (! (username && password)) {
         return res.status(400).send({
-            message: 'Username and password required required.'
+            message: 'Username and password are required.'
         });
     }
 
@@ -126,11 +126,9 @@ const login = async (req, res) => {
                 message: `User with username ${username} not found`
             });
         } else {
-            const genHash = await hashPassword(user.salt, hash);
-            console.log('genHash', genHash)
-            console.log('hash', user.hash)
-            if (genHash == user.hash){
-                return res.redirect('/');
+            const genHash = await hashPassword(user.salt, password);
+            if (genHash == user.password){
+                return res.send('login successful');
             } else{
                 return res.status(404).send({
                     message: `Username or Password is wrong`
@@ -151,7 +149,7 @@ const hashPassword = ((salt, password) => {
         password, 
         salt,  
         1000, 
-        128, 
+        64, 
         'sha512'
     ).toString(`hex`); 
     return hash ;

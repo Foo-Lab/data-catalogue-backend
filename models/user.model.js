@@ -24,7 +24,7 @@ const User = db.define('User', {
         type: DataTypes.STRING(32),
         allowNull: true,
     },
-    hash: {
+    password: {
         type: DataTypes.STRING(128),
         allowNull: true,
     },
@@ -37,19 +37,19 @@ const User = db.define('User', {
 const crypto = require('crypto');
 User.beforeCreate(async (user, options) => {
     console.log('beforecreate', user)
-    const { salt, hash } = await hashPassword(user.hash);
-    user.hash = hash;
+    const { salt, hash } = await hashPassword(user.password);
+    user.password = hash;
     user.salt = salt;
     console.log(user);
 });
 
 const hashPassword = ((password) => {
-    const salt = crypto.randomBytes(32).toString('hex');
+    const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.pbkdf2Sync(
         password, 
         salt,  
         1000, 
-        128, 
+        64, 
         'sha512'
     ).toString(`hex`); 
     return { salt, hash };
