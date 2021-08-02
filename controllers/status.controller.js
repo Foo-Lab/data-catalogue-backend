@@ -1,22 +1,21 @@
-const { Status } = require('../models/index.js');
-
+const { Status } = require('../models/index');
 
 const create = async (req, res) => {
-    const { name} = req.body;
-    if (!(name )) {
+    const { name } = req.body;
+    if (!(name)) {
         return res.status(400).send({
-            message: 'name required.'
+            message: 'name required.',
         });
     }
 
     try {
         const st = await Status.create({
-            name
+            name,
         });
-        return res.send(st)
+        return res.send(st);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -24,10 +23,10 @@ const create = async (req, res) => {
 const findAll = async (req, res) => {
     try {
         const st = await Status.findAll();
-        return res.send(st)
+        return res.send(st);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -40,26 +39,24 @@ const findOne = async (req, res) => {
 
         if (!st) {
             return res.status(404).send({
-                message: `Status with id ${id} not found`
+                message: `Status with id ${id} not found`,
             });
-        } else {
-            return res.send(st);
         }
+        return res.send(st);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
 
-const update = async (req, res) => { 
-
+const update = async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body; //just put name first, since thrs nth
+    const { name } = req.body; // just put name first, since thrs nth
 
     if (!name) {
         return res.status(400).send({
-            message: 'New name required.'
+            message: 'New name required.',
         });
     }
 
@@ -68,16 +65,15 @@ const update = async (req, res) => {
 
         if (!st) {
             return res.status(404).send({
-                message: `Status with id ${id} not found`
+                message: `Status with id ${id} not found`,
             });
-        } else {
-            st.name = name;
-            st.save();
-            return res.send(st);
         }
+        st.name = name;
+        st.save();
+        return res.send(st);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -90,15 +86,14 @@ const remove = async (req, res) => {
 
         if (!st) {
             return res.status(404).send({
-                message: `Status with id ${id} not found`
+                message: `Status with id ${id} not found`,
             });
-        } else {
-            await st.destroy();
-            return res.send(st);
         }
+        await st.destroy();
+        return res.send(st);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -109,4 +104,4 @@ module.exports = {
     findOne,
     update,
     remove,
-}
+};

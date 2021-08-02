@@ -1,14 +1,12 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/database');
 
-const User = require('./user.model.js');
-const Status = require('./status.model.js');
-const Organism = require('./organism.model.js');
-const Experiment = require('./experiment.model.js');
-const SampleFile = require('./sampleFile.model.js');
-const SequencingProvider = require('./sequencingProvider.model.js');
-const Sequencer = require('./sequencer.model.js');
-const SequencingType = require('./sequencingType.model.js');
+const db = require('../config/database');
+const User = require('./user.model');
+const Status = require('./status.model');
+const Organism = require('./organism.model');
+const SequencingProvider = require('./sequencingProvider.model');
+const Sequencer = require('./sequencer.model');
+const SequencingType = require('./sequencingType.model');
 
 const Sample = db.define('Sample', {
     id: {
@@ -17,20 +15,20 @@ const Sample = db.define('Sample', {
         autoIncrement: true,
 
     },
-    user_id: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: User,
-            key : 'id',
+            key: 'id',
         },
     },
-    status_id: {
+    statusId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Status,
-            key : 'id',
+            key: 'id',
         },
     },
     date: {
@@ -49,12 +47,12 @@ const Sample = db.define('Sample', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
-    organism_id: {
+    organismId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Organism,
-            key : 'id',
+            key: 'id',
         },
     },
     tissue: {
@@ -69,31 +67,31 @@ const Sample = db.define('Sample', {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    sequecing_type_id: {
+    sequecingTypeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: SequencingType,
-            key : 'id',
+            key: 'id',
         },
     },
-    sequencer_id: {
+    sequencerId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Sequencer,
-            key : 'id',
+            key: 'id',
         },
     },
-    sequencing_provider_id: {
+    sequencingProviderId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: SequencingProvider,
-            key : 'id', 
+            key: 'id',
         },
     },
-    SRA: {
+    sra: {
         type: DataTypes.STRING(10),
         allowNull: false,
     },
@@ -101,7 +99,6 @@ const Sample = db.define('Sample', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-
 });
 
 module.exports = Sample;

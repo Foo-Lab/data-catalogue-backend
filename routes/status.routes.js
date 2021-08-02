@@ -1,5 +1,4 @@
-const status = require('../controllers/status.controller.js');
-//const status = require('../models/status.model.js');
+const status = require('../controllers/status.controller');
 
 module.exports = (app) => {
     app.post('/status', status.create);

@@ -9,9 +9,9 @@ const database = new Sequelize(
         port: process.env.DB_PORT,
         dialect: 'mysql',
         define: {
-            underscored : true
-        }
-    }
+            underscored: true,
+        },
+    },
 );
 
 (async () => {
@@ -23,4 +23,4 @@ const database = new Sequelize(
     }
 })();
 
-module.exports = database
+module.exports = database;

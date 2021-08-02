@@ -1,5 +1,4 @@
-const sample = require('../controllers/sample.controller.js');
-//const sample = require('../models/sample.model.js');
+const sample = require('../controllers/sample.controller');
 
 module.exports = (app) => {
     app.post('/sample', sample.create);

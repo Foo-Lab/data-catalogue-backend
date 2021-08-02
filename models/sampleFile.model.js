@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/database');
-const Sample = require('./sample.model.js');
-const FileType = require('./fileType.model.js');
 
+const db = require('../config/database');
+const Sample = require('./sample.model');
+const FileType = require('./fileType.model');
 
 const SampleFile = db.define('SampleFile', {
     id: {
@@ -10,20 +10,20 @@ const SampleFile = db.define('SampleFile', {
         primaryKey: true,
         autoIncrement: true,
     },
-    sample_id: {
+    sampleId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Sample,
-            key : 'id',
+            key: 'id',
         },
     },
-    file_type_id: {
+    fileTypeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: FileType,
-            key : 'id',
+            key: 'id',
         },
     },
     location: {
@@ -34,7 +34,6 @@ const SampleFile = db.define('SampleFile', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-
 });
 
 module.exports = SampleFile;

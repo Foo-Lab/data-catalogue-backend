@@ -1,5 +1,4 @@
-const experiment = require('../controllers/experiment.controller.js');
-//const experiment = require('../models/experiment.model.js');
+const experiment = require('../controllers/experiment.controller');
 
 module.exports = (app) => {
     app.post('/experiment', experiment.create);

@@ -11,7 +11,6 @@ const Status = db.define('Status', {
         type: DataTypes.STRING(50),
         allowNull: false,
     },
-
 });
 
 module.exports = Status;

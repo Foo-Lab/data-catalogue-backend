@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/database');
 
+const db = require('../config/database');
+const { generateSalt, hashPassword } = require('../utilities');
 
 const User = db.define('User', {
     id: {
@@ -28,31 +29,17 @@ const User = db.define('User', {
         type: DataTypes.STRING(128),
         allowNull: true,
     },
-    is_admin: {
+    isAdmin: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
 });
 
-const crypto = require('crypto');
-User.beforeCreate(async (user, options) => {
-    console.log('beforecreate', user)
-    const { salt, hash } = await hashPassword(user.password);
+User.beforeCreate(async (user) => {
+    const salt = generateSalt();
+    const hash = await hashPassword(user.password, salt);
     user.password = hash;
     user.salt = salt;
-    console.log(user);
-});
-
-const hashPassword = ((password) => {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(
-        password, 
-        salt,  
-        1000, 
-        64, 
-        'sha512'
-    ).toString(`hex`); 
-    return { salt, hash };
 });
 
 module.exports = User;

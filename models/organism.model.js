@@ -11,7 +11,6 @@ const Organism = db.define('Organism', {
         type: DataTypes.STRING(15),
         allowNull: false,
     },
-
 });
 
 module.exports = Organism;

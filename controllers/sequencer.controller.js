@@ -1,22 +1,21 @@
-const { Sequencer } = require('../models/index.js');
-
+const { Sequencer } = require('../models/index');
 
 const create = async (req, res) => {
-    const { name} = req.body;
-    if (!name ) {
+    const { name } = req.body;
+    if (!name) {
         return res.status(400).send({
-            message: 'name required.'
+            message: 'name required.',
         });
     }
 
     try {
         const seq = await Sequencer.create({
-            name
+            name,
         });
-        return res.send(seq)
+        return res.send(seq);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -24,10 +23,10 @@ const create = async (req, res) => {
 const findAll = async (req, res) => {
     try {
         const seq = await Sequencer.findAll();
-        return res.send(seq)
+        return res.send(seq);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -40,26 +39,24 @@ const findOne = async (req, res) => {
 
         if (!seq) {
             return res.status(404).send({
-                message: `Sequencer with id ${id} not found`
+                message: `Sequencer with id ${id} not found`,
             });
-        } else {
-            return res.send(seq);
         }
+        return res.send(seq);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
 
-const update = async (req, res) => { 
-
+const update = async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body; //just put name first, since thrs nth
+    const { name } = req.body;
 
     if (!name) {
         return res.status(400).send({
-            message: 'New name required.'
+            message: 'New name required.',
         });
     }
 
@@ -68,16 +65,15 @@ const update = async (req, res) => {
 
         if (!seq) {
             return res.status(404).send({
-                message: `Sequencer with id ${id} not found`
+                message: `Sequencer with id ${id} not found`,
             });
-        } else {
-            seq.name = name;
-            seq.save();
-            return res.send(seq);
         }
+        seq.name = name;
+        seq.save();
+        return res.send(seq);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -90,15 +86,14 @@ const remove = async (req, res) => {
 
         if (!seq) {
             return res.status(404).send({
-                message: `Sequencer with id ${id} not found`
+                message: `Sequencer with id ${id} not found`,
             });
-        } else {
-            await seq.destroy();
-            return res.send(seq);
         }
+        await seq.destroy();
+        return res.send(seq);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -109,4 +104,4 @@ module.exports = {
     findOne,
     update,
     remove,
-}
+};

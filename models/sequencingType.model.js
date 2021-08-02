@@ -11,7 +11,6 @@ const SequencingType = db.define('SequencingType', {
         type: DataTypes.STRING(25),
         allowNull: false,
     },
- 
 });
 
 module.exports = SequencingType;

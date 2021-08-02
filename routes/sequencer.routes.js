@@ -1,5 +1,4 @@
-const sequencer = require('../controllers/sequencer.controller.js');
-//const sequencer = require('../models/sequencer.model.js');
+const sequencer = require('../controllers/sequencer.controller');
 
 module.exports = (app) => {
     app.post('/sequencer', sequencer.create);

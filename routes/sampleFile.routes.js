@@ -1,5 +1,4 @@
-const sampleFile = require('../controllers/sampleFile.controller.js');
-//const sampleFile = require('../models/sampleFile.model.js');
+const sampleFile = require('../controllers/sampleFile.controller');
 
 module.exports = (app) => {
     app.post('/sampleFile', sampleFile.create);

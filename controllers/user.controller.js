@@ -1,23 +1,24 @@
-const { User } = require('../models/index.js');
-const crypto = require('crypto');
-
+const { User } = require('../models/index');
+const { hashPassword } = require('../utilities');
 
 const create = async (req, res) => {
-    const { name, username, email, password, is_admin } = req.body;
-    if (!(name && username && email && password && is_admin )) {
+    const {
+        name, username, email, password, isAdmin,
+    } = req.body;
+    if (!(name && username && email && password && isAdmin)) {
         return res.status(400).send({
-            message: 'name, username, email, password, is_admin required.'
+            message: 'name, username, email, password, is_admin required.',
         });
     }
 
     try {
         const usr = await User.create({
-            name, username, email, password, is_admin
+            name, username, email, password, isAdmin,
         });
-        return res.send(usr)
+        return res.send(usr);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -25,10 +26,10 @@ const create = async (req, res) => {
 const findAll = async (req, res) => {
     try {
         const usr = await User.findAll();
-        return res.send(usr)
+        return res.send(usr);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -41,14 +42,13 @@ const findOne = async (req, res) => {
 
         if (!usr) {
             return res.status(404).send({
-                message: `User with id ${id} not found`
+                message: `User with id ${id} not found`,
             });
-        } else {
-            return res.send(usr);
         }
+        return res.send(usr);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -57,9 +57,9 @@ const update = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (! (name)) {
+    if (!(name)) {
         return res.status(400).send({
-            message: 'New name required.'
+            message: 'New name required.',
         });
     }
 
@@ -68,16 +68,15 @@ const update = async (req, res) => {
 
         if (!usr) {
             return res.status(404).send({
-                message: `User with id ${id} not found`
+                message: `User with id ${id} not found`,
             });
-        } else {
-            usr.name = name;
-            usr.save();
-            return res.send(usr);
         }
+        usr.name = name;
+        usr.save();
+        return res.send(usr);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -90,72 +89,51 @@ const remove = async (req, res) => {
 
         if (!usr) {
             return res.status(404).send({
-                message: `User with id ${id} not found`
+                message: `User with id ${id} not found`,
             });
-        } else {
-            await usr.destroy();
-            return res.send(usr);
         }
+        await usr.destroy();
+        return res.send(usr);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
 
-
-
 const login = async (req, res) => {
-    const { username, password } = req.body; /* put salt here but i know its wrong or at line 123*/
-    
-    if (! (username && password)) {
+    const { username, password } = req.body;
+
+    if (!(username && password)) {
         return res.status(400).send({
-            message: 'Username and password are required.'
+            message: 'Username and password are required.',
         });
     }
 
     try {
-      
-        const user = await User.findOne({ 
+        const user = await User.findOne({
             where: {
-                username: username
-            }
-        })
+                username,
+            },
+        });
         if (!user) {
             return res.status(404).send({
-                message: `User with username ${username} not found`
+                message: `User with username ${username} not found`,
             });
-        } else {
-            const genHash = await hashPassword(user.salt, password);
-            if (genHash == user.password){
-                return res.send('login successful');
-            } else{
-                return res.status(404).send({
-                    message: `Username or Password is wrong`
-                });
-            }
         }
+        const genHash = await hashPassword(password, user.salt);
+        if (genHash === user.password) {
+            return res.send('login successful');
+        }
+        return res.status(404).send({
+            message: 'Username or Password is wrong',
+        });
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
-
-
-const hashPassword = ((salt, password) => {
-    console.log(salt, password)
-    const hash = crypto.pbkdf2Sync(
-        password, 
-        salt,  
-        1000, 
-        64, 
-        'sha512'
-    ).toString(`hex`); 
-    return hash ;
-});
-
-
 
 module.exports = {
     create,
@@ -164,4 +142,4 @@ module.exports = {
     update,
     remove,
     login,
-}
+};

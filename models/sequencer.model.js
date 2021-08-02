@@ -11,7 +11,6 @@ const Sequencer = db.define('Sequencer', {
         type: DataTypes.STRING(25),
         allowNull: false,
     },
-
 });
 
 module.exports = Sequencer;

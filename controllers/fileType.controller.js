@@ -1,22 +1,21 @@
-const { FileType } = require('../models/index.js');
-
+const { FileType } = require('../models/index');
 
 const create = async (req, res) => {
-    const { name} = req.body;
-    if (!name ) {
+    const { name } = req.body;
+    if (!name) {
         return res.status(400).send({
-            message: 'name required.'
+            message: 'name required.',
         });
     }
 
     try {
         const ftype = await FileType.create({
-            name
+            name,
         });
-        return res.send(ftype)
+        return res.send(ftype);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -24,10 +23,10 @@ const create = async (req, res) => {
 const findAll = async (req, res) => {
     try {
         const ftype = await FileType.findAll();
-        return res.send(ftype)
+        return res.send(ftype);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -40,26 +39,24 @@ const findOne = async (req, res) => {
 
         if (!ftype) {
             return res.status(404).send({
-                message: `File Type with id ${id} not found`
+                message: `File Type with id ${id} not found`,
             });
-        } else {
-            return res.send(ftype);
         }
+        return res.send(ftype);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
 
-const update = async (req, res) => { 
-
+const update = async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body; //just put name first, since thrs nth
+    const { name } = req.body;
 
     if (!name) {
         return res.status(400).send({
-            message: 'New name required.'
+            message: 'New name required.',
         });
     }
 
@@ -68,16 +65,15 @@ const update = async (req, res) => {
 
         if (!ftype) {
             return res.status(404).send({
-                message: `File Type with id ${id} not found`
+                message: `File Type with id ${id} not found`,
             });
-        } else {
-            ftype.name = name;
-            ftype.save();
-            return res.send(ftype);
         }
+        ftype.name = name;
+        ftype.save();
+        return res.send(ftype);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -90,15 +86,14 @@ const remove = async (req, res) => {
 
         if (!ftype) {
             return res.status(404).send({
-                message: `File Type with id ${id} not found`
+                message: `File Type with id ${id} not found`,
             });
-        } else {
-            await ftype.destroy();
-            return res.send(ftype);
         }
+        await ftype.destroy();
+        return res.send(ftype);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -109,4 +104,4 @@ module.exports = {
     findOne,
     update,
     remove,
-}
+};

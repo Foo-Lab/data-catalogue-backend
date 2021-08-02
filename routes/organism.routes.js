@@ -1,5 +1,4 @@
-const organism = require('../controllers/organism.controller.js');
-//const organism = require('../models/organism.model.js');
+const organism = require('../controllers/organism.controller');
 
 module.exports = (app) => {
     app.post('/organism', organism.create);

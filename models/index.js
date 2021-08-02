@@ -1,44 +1,51 @@
-const User = require('./user.model.js');
- const Status = require('./status.model.js');
- const Organism = require('./organism.model.js');
- const Experiment = require('./experiment.model.js');
- const Sample = require('./sample.model.js');
- const SampleFile = require('./sampleFile.model.js');
- const FileType = require('./fileType.model.js');
- const SequencingProvider = require('./sequencingProvider.model.js');
- const Sequencer = require('./sequencer.model.js');
- const SequencingType = require('./sequencingType.model.js');
+const db = require('../config/database');
+const User = require('./user.model');
+const Status = require('./status.model');
+const Organism = require('./organism.model');
+const Experiment = require('./experiment.model');
+const Sample = require('./sample.model');
+const SampleFile = require('./sampleFile.model');
+const FileType = require('./fileType.model');
+const SequencingProvider = require('./sequencingProvider.model');
+const Sequencer = require('./sequencer.model');
+const SequencingType = require('./sequencingType.model');
 
+// associations
+User.hasMany(Experiment, { foreignKey: 'userId' });
+User.hasMany(Sample, { foreignKey: 'userId' });
 
- // associations
+Status.hasMany(Sample, { foreignKey: 'statusId' });
 
-User.hasMany(Experiment, {foreignKey: "user_id"});
-User.hasMany(Sample, {foreignKey: "user_id"});
+Organism.hasMany(Sample, { foreignKey: 'organismId' });
 
-Status.hasMany( Sample, {foreignKey: "status_id"});
+SequencingType.hasMany(Sample, { foreignKey: 'sequencingTypeId' });
 
-Organism.hasMany( Sample, {foreignKey: "organism_id"});
+Experiment.hasMany(Sample, { foreignKey: 'experimentId' });
+Experiment.belongsTo(User, { foreignKey: 'userId' });
 
-SequencingType.hasMany( Sample, {foreignKey: "sequencing_type_id"});
+Sequencer.hasMany(Sample, { foreignKey: 'sequencerId' });
 
-Experiment.hasMany(Sample, {foreignKey : "experiment_id"});
-Experiment.belongsTo(User, {foreignKey : "user_id"} );
+SequencingProvider.hasMany(Sample, { foreignKey: 'sequencingProviderId' });
 
-Sequencer.hasMany(Sample, {foreignKey : "sequencer_id"});
+FileType.hasMany(SampleFile, { foreignKey: 'fileTypeId' });
 
-SequencingProvider.hasMany( Sample, {foreignKey : "sequencing_provider_id"});
+Sample.belongsTo(Experiment, { foreignKey: 'experimentId' });
+Sample.belongsTo(User, { foreignKey: 'userId' });
+Sample.belongsTo(Status, { foreignKey: 'statusId' });
+Sample.belongsTo(Organism, { foreignKey: 'organismId' });
+Sample.belongsTo(SequencingType, { foreignKey: 'sequencingTypeId' });
+Sample.belongsTo(Sequencer, { foreignKey: 'sequencerId' });
+Sample.belongsTo(SequencingProvider, { foreignKey: 'sequencingProviderId' });
+Sample.hasMany(SampleFile, { foreignKey: 'sampleId' });
 
-FileType.hasMany(SampleFile, {foreignKey : "file_type_id"});
-
-Sample.belongsTo(Experiment, {foreignKey : "experiment_id"});
-Sample.belongsTo(User, {foreignKey : "user_id"});
-Sample.belongsTo(Status, {foreignKey : "Status_id"});
-Sample.belongsTo(Organism, {foreignKey : "organism_id"});
-Sample.belongsTo(SequencingType, {foreignKey : "sequencing_type_id"});
-Sample.belongsTo(Sequencer, {foreignKey : "sequencer_id"});
-Sample.belongsTo(SequencingProvider, {foreignKey : "sequencing_provider_id"});
-Sample.hasMany(SampleFile, {foreignKey : "sample_id"});
-
+(async () => {
+    try {
+        await db.sync({ alter: true });
+        console.log('All models were synchronized successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+})();
 
 module.exports = {
     User,
@@ -50,6 +57,5 @@ module.exports = {
     FileType,
     SequencingProvider,
     Sequencer,
-    SequencingType
+    SequencingType,
 };
-

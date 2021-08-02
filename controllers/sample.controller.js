@@ -1,21 +1,60 @@
-const { Sample } = require('../models/index.js');
+const { Sample } = require('../models/index');
 
 const create = async (req, res) => {
-    const { experiment_id, user_id, status_id, date, code, name, organism_id, tissue, condition, treatment, sequencing_type_id, sequencer_id, sequencing_provider_id} = req.body;
-    if (!(experiment_id && user_id && status_id && date && code && name && organism_id && tissue && condition && treatment && sequencing_type_id && sequencer_id && sequencing_provider_id)) {
+    const {
+        experimentId,
+        userId,
+        statusId,
+        date, code,
+        name,
+        organismId,
+        tissue,
+        condition,
+        treatment,
+        sequencingTypeId,
+        sequencerId,
+        sequencingProviderId,
+    } = req.body;
+    if (!(
+        experimentId
+        && userId
+        && statusId
+        && date
+        && code
+        && name
+        && organismId
+        && tissue
+        && condition
+        && treatment
+        && sequencing_typeId
+        && sequencerId
+        && sequencing_providerId
+    )) {
         return res.status(400).send({
-            message: 'experiment_id, user_id, status_id, date, code, name, organism_id, tissue, condition, treatment, sequencing_type_id, sequencer_id and sequencing_provider_id required.'
+            message: 'experimentId, userId, statusId, date, code, name, organismId, tissue, condition, treatment, sequencing_typeId, sequencerId and sequencing_providerId required.',
         });
     }
 
     try {
         const sam = await Sample.create({
-            experiment_id, user_id, status_id, date, code, name, organism_id, tissue, condition, treatment, sequencing_type_id, sequencer_id, sequencing_provider_id
+            experimentId,
+            userId,
+            statusId,
+            date,
+            code,
+            name,
+            organismId,
+            tissue,
+            condition,
+            treatment,
+            sequencingTypeId,
+            sequencerId,
+            sequencingProviderId,
         });
-        return res.send(sam)
+        return res.send(sam);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -23,10 +62,10 @@ const create = async (req, res) => {
 const findAll = async (req, res) => {
     try {
         const sam = await Sample.findAll();
-        return res.send(sam)
+        return res.send(sam);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -39,14 +78,13 @@ const findOne = async (req, res) => {
 
         if (!sam) {
             return res.status(404).send({
-                message: `Sample with id ${id} not found`
+                message: `Sample with id ${id} not found`,
             });
-        } else {
-            return res.send(sam);
         }
+        return res.send(sam);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -57,7 +95,7 @@ const update = async (req, res) => {
 
     if (!code) {
         return res.status(400).send({
-            message: 'New code required.'
+            message: 'New code required.',
         });
     }
 
@@ -66,16 +104,15 @@ const update = async (req, res) => {
 
         if (!sam) {
             return res.status(404).send({
-                message: `Sample with id ${id} not found`
+                message: `Sample with id ${id} not found`,
             });
-        } else {
-            sam.code = code;
-            sam.save();
-            return res.send(sam);
         }
+        sam.code = code;
+        sam.save();
+        return res.send(sam);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -88,15 +125,14 @@ const remove = async (req, res) => {
 
         if (!sam) {
             return res.status(404).send({
-                message: `Sample with id ${id} not found`
+                message: `Sample with id ${id} not found`,
             });
-        } else {
-            await sam.destroy();
-            return res.send(sam);
         }
+        await sam.destroy();
+        return res.send(sam);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -107,4 +143,4 @@ module.exports = {
     findOne,
     update,
     remove,
-}
+};

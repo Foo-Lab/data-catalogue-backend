@@ -1,5 +1,4 @@
-const sequencingType = require('../controllers/sequencingType.controller.js');
-//const sequencingType = require('../models/sequencingType.model.js');
+const sequencingType = require('../controllers/sequencingType.controller');
 
 module.exports = (app) => {
     app.post('/sequencingType', sequencingType.create);

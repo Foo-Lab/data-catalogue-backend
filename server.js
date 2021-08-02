@@ -10,19 +10,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // routes
 app.get('/', (req, res) => res.send('test'));
-require('./routes/user.routes.js')(app);
-require('./routes/status.routes.js')(app);
-require('./routes/organism.routes.js')(app);
-require('./routes/sequencingType.routes.js')(app);
-require('./routes/sequencer.routes.js')(app);
-require('./routes/sequencingProvider.routes.js')(app);
-require('./routes/fileType.routes.js')(app);
-require('./routes/sampleFile.routes.js')(app);
-require('./routes/experiment.routes.js')(app);
-require('./routes/sample.routes.js')(app);
-
+require('./routes/user.routes')(app);
+require('./routes/status.routes')(app);
+require('./routes/organism.routes')(app);
+require('./routes/sequencingType.routes')(app);
+require('./routes/sequencer.routes')(app);
+require('./routes/sequencingProvider.routes')(app);
+require('./routes/fileType.routes')(app);
+require('./routes/sampleFile.routes')(app);
+require('./routes/experiment.routes')(app);
+require('./routes/sample.routes')(app);
 
 const port = process.env.PORT || 5000;
-app.listen(port, () =>
-    console.log(`Server listening at port ${port}...`)
-);
+app.listen(port, () => console.log(`Server listening at port ${port}...`));

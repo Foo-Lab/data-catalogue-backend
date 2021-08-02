@@ -11,7 +11,6 @@ const SequencingProvider = db.define('SequencingProvider', {
         type: DataTypes.STRING(25),
         allowNull: false,
     },
-
 });
 
 module.exports = SequencingProvider;

@@ -1,47 +1,53 @@
-const { 
-    Experiment,
-    User } = require('../models/index.js');
-
+const { Experiment, User } = require('../models/index');
 
 const create = async (req, res) => {
-    const { user_id, date, code, name, description} = req.body;
+    const {
+        userId,
+        date,
+        code,
+        name,
+        description,
+    } = req.body;
 
-    if (!(user_id && date && code && name && description)) {
+    if (!(userId && date && code && name && description)) {
         return res.status(400).send({
-            message: 'user_id, date, code, name and description required.'
+            message: 'userId, date, code, name and description required.',
         });
     }
 
     try {
         const exp = await Experiment.create({
-            user_id, date, code, name, description
+            userId,
+            date,
+            code,
+            name,
+            description,
         });
-        return res.send(exp)
+        return res.send(exp);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
 
 const findAll = async (req, res) => {
-    const { user_id } = req.params;
+    const { userId } = req.params;
 
     try {
-        const exp = await Experiment.findByPk(user_id, {
-            include: User
+        const exp = await Experiment.findByPk(userId, {
+            include: User,
         });
 
-        if (!(exp && exp['user_id'])){
+        if (!(exp && exp.userId)) {
             return res.status(404).send({
-                message : 'User with id ${user_id} not found'
+                message: `User with id ${userId} not found`,
             });
-        } else{
-            return res.send(exp['user_id']);
         }
+        return res.send(exp.userId);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -54,26 +60,24 @@ const findOne = async (req, res) => {
 
         if (!exp) {
             return res.status(404).send({
-                message: `Experiment with id ${id} not found`
+                message: `Experiment with id ${id} not found`,
             });
-        } else {
-            return res.send(exp);
         }
+        return res.send(exp);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
 
-const update = async (req, res) => { 
-
+const update = async (req, res) => {
     const { id } = req.params;
-    const { description } = req.body; //putting des first
+    const { description } = req.body; // putting des first
 
     if (!description) {
         return res.status(400).send({
-            message: 'New description required.'
+            message: 'New description required.',
         });
     }
 
@@ -82,16 +86,15 @@ const update = async (req, res) => {
 
         if (!exp) {
             return res.status(404).send({
-                message: `Experiment with id ${id} not found`
+                message: `Experiment with id ${id} not found`,
             });
-        } else {
-            exp.description = description;
-            exp.save();
-            return res.send(exp);
         }
+        exp.description = description;
+        exp.save();
+        return res.send(exp);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -104,15 +107,14 @@ const remove = async (req, res) => {
 
         if (!exp) {
             return res.status(404).send({
-                message: `Experiment with id ${id} not found`
+                message: `Experiment with id ${id} not found`,
             });
-        } else {
-            await exp.destroy();
-            return res.send(exp);
         }
+        await exp.destroy();
+        return res.send(exp);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -123,4 +125,4 @@ module.exports = {
     findOne,
     update,
     remove,
-}
+};

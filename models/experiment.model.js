@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/database');
-const User = require('./user.model.js');
 
+const db = require('../config/database');
+const User = require('./user.model');
 
 const Experiment = db.define('Experiment', {
     id: {
@@ -9,12 +9,12 @@ const Experiment = db.define('Experiment', {
         primaryKey: true,
         autoIncrement: true,
     },
-    user_id: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: User,
-            key : 'id',
+            key: 'id',
         },
     },
     date: {

@@ -1,5 +1,4 @@
-const fileType = require('../controllers/fileType.controller.js');
-//const fileType = require('../models/fileType.model.js');
+const fileType = require('../controllers/fileType.controller');
 
 module.exports = (app) => {
     app.post('/fileType', fileType.create);

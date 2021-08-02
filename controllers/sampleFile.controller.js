@@ -1,21 +1,23 @@
-const { SampleFile } = require('../models/index.js');
+const { SampleFile } = require('../models/index');
 
 const create = async (req, res) => {
-    const { sample_id, file_type_id, location, remarks } = req.body;
-    if (!(sample_id && file_type_id && location && remarks )) {
+    const {
+        sampleId, fileTypeId, location, remarks,
+    } = req.body;
+    if (!(sampleId && fileTypeId && location && remarks)) {
         return res.status(400).send({
-            message: 'sample_id, file_type_id, location, remarks required.'
+            message: 'sampleId, fileTypeId, location, remarks required.',
         });
     }
 
     try {
         const sf = await SampleFile.create({
-            sample_id, file_type_id, location, remarks
+            sampleId, fileTypeId, location, remarks,
         });
-        return res.send(sf)
+        return res.send(sf);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -23,10 +25,10 @@ const create = async (req, res) => {
 const findAll = async (req, res) => {
     try {
         const sf = await SampleFile.findAll();
-        return res.send(sf)
+        return res.send(sf);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -39,14 +41,13 @@ const findOne = async (req, res) => {
 
         if (!sf) {
             return res.status(404).send({
-                message: `Sample File with id ${id} not found`
+                message: `Sample File with id ${id} not found`,
             });
-        } else {
-            return res.send(sf);
         }
+        return res.send(sf);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -57,7 +58,7 @@ const update = async (req, res) => {
 
     if (!location) {
         return res.status(400).send({
-            message: 'New location required.'
+            message: 'New location required.',
         });
     }
 
@@ -66,16 +67,15 @@ const update = async (req, res) => {
 
         if (!sf) {
             return res.status(404).send({
-                message: `Sample File with id ${id} not found`
+                message: `Sample File with id ${id} not found`,
             });
-        } else {
-            sf.location = location;
-            sf.save();
-            return res.send(sf);
         }
+        sf.location = location;
+        sf.save();
+        return res.send(sf);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -88,15 +88,14 @@ const remove = async (req, res) => {
 
         if (!sf) {
             return res.status(404).send({
-                message: `Sample File with id ${id} not found`
+                message: `Sample File with id ${id} not found`,
             });
-        } else {
-            await sf.destroy();
-            return res.send(sf);
         }
+        await sf.destroy();
+        return res.send(sf);
     } catch (error) {
         return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`
+            message: `Unable to connect to the database: ${error}`,
         });
     }
 };
@@ -107,4 +106,4 @@ module.exports = {
     findOne,
     update,
     remove,
-}
+};
