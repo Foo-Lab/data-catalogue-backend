@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const { SequelizeError } = require('../utils');
 
 const database = new Sequelize(
     process.env.DB_NAME,
@@ -13,6 +14,12 @@ const database = new Sequelize(
         },
     },
 );
+
+database.query = async function catchSequelizeError(...args) {
+    return Sequelize.prototype.query.apply(this, args).catch((error) => {
+        throw new SequelizeError(error);
+    });
+};
 
 (async () => {
     try {

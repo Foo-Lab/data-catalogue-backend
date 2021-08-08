@@ -1,6 +1,7 @@
-const { Experiment, User } = require('../models/index');
+const { Experiment } = require('../models/index');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const {
         userId,
         date,
@@ -9,115 +10,67 @@ const create = async (req, res) => {
         description,
     } = req.body;
 
-    if (!(userId && date && code && name && description)) {
-        return res.status(400).send({
-            message: 'userId, date, code, name and description required.',
-        });
-    }
+    const exp = await Experiment.create({
+        userId,
+        date,
+        code,
+        name,
+        description,
+    });
+    return res.send(exp);
+});
 
-    try {
-        const exp = await Experiment.create({
-            userId,
-            date,
-            code,
-            name,
-            description,
-        });
-        return res.send(exp);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const exp = await Experiment.findAll();
+    return res.send(exp);
+});
 
-const findAll = async (req, res) => {
-    const { userId } = req.params;
-
-    try {
-        const exp = await Experiment.findByPk(userId, {
-            include: User,
-        });
-
-        if (!(exp && exp.userId)) {
-            return res.status(404).send({
-                message: `User with id ${userId} not found`,
-            });
-        }
-        return res.send(exp.userId);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const exp = await Experiment.findByPk(id);
-
-        if (!exp) {
-            return res.status(404).send({
-                message: `Experiment with id ${id} not found`,
-            });
-        }
-        return res.send(exp);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const exp = await Experiment.findByPk(id);
+    if (!exp) {
+        throw new AppError('Experiment not found', 404);
     }
-};
+    return res.send(exp);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { description } = req.body; // putting des first
+    const {
+        userId,
+        date,
+        code,
+        name,
+        description,
+    } = req.body;
 
-    if (!description) {
-        return res.status(400).send({
-            message: 'New description required.',
-        });
+    const exp = await Experiment.findByPk(id);
+    if (!exp) {
+        throw new AppError('Experiment not found', 404);
     }
 
-    try {
-        const exp = await Experiment.findByPk(id);
+    await exp.update({
+        userId,
+        date,
+        code,
+        name,
+        description,
+    });
+    return res.send(exp);
+});
 
-        if (!exp) {
-            return res.status(404).send({
-                message: `Experiment with id ${id} not found`,
-            });
-        }
-        exp.description = description;
-        exp.save();
-        return res.send(exp);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const exp = await Experiment.findByPk(id);
-
-        if (!exp) {
-            return res.status(404).send({
-                message: `Experiment with id ${id} not found`,
-            });
-        }
-        await exp.destroy();
-        return res.send(exp);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const exp = await Experiment.findByPk(id);
+    if (!exp) {
+        throw new AppError('Experiment not found', 404);
     }
-};
+
+    await exp.destroy();
+    return res.send(exp);
+});
 
 module.exports = {
     create,

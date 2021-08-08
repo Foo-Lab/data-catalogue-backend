@@ -20,14 +20,26 @@ const Experiment = db.define('Experiment', {
     date: {
         type: DataTypes.DATE,
         allowNull: false,
+        validate: {
+            isDate: true,
+        },
     },
     code: {
         type: DataTypes.STRING(10),
         allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: true,
+            len: [2, 10],
+        },
     },
     name: {
         type: DataTypes.STRING(100),
         allowNull: false,
+        validate: {
+            notEmpty: true,
+            len: [2, 100],
+        },
     },
     description: {
         type: DataTypes.TEXT,

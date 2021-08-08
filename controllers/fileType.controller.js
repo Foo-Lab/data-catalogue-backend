@@ -1,102 +1,56 @@
 const { FileType } = require('../models/index');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const { name } = req.body;
-    if (!name) {
-        return res.status(400).send({
-            message: 'name required.',
-        });
-    }
 
-    try {
-        const ftype = await FileType.create({
-            name,
-        });
-        return res.send(ftype);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+    const type = await FileType.create({
+        name,
+    });
+    return res.send(type);
+});
 
-const findAll = async (req, res) => {
-    try {
-        const ftype = await FileType.findAll();
-        return res.send(ftype);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const type = await FileType.findAll();
+    return res.send(type);
+});
 
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const ftype = await FileType.findByPk(id);
-
-        if (!ftype) {
-            return res.status(404).send({
-                message: `File Type with id ${id} not found`,
-            });
-        }
-        return res.send(ftype);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const type = await FileType.findByPk(id);
+    if (!type) {
+        throw new AppError('File Type not found', 404);
     }
-};
+    return res.send(type);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (!name) {
-        return res.status(400).send({
-            message: 'New name required.',
-        });
+    const type = await FileType.findByPk(id);
+    if (!type) {
+        throw new AppError('File Type not found', 404);
     }
 
-    try {
-        const ftype = await FileType.findByPk(id);
+    await type.update({
+        name,
+    });
+    return res.send(type);
+});
 
-        if (!ftype) {
-            return res.status(404).send({
-                message: `File Type with id ${id} not found`,
-            });
-        }
-        ftype.name = name;
-        ftype.save();
-        return res.send(ftype);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const ftype = await FileType.findByPk(id);
-
-        if (!ftype) {
-            return res.status(404).send({
-                message: `File Type with id ${id} not found`,
-            });
-        }
-        await ftype.destroy();
-        return res.send(ftype);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const type = await FileType.findByPk(id);
+    if (!type) {
+        throw new AppError('File Type not found', 404);
     }
-};
+
+    await type.destroy();
+    return res.send(type);
+});
 
 module.exports = {
     create,

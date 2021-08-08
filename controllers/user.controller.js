@@ -1,139 +1,89 @@
 const { User } = require('../models/index');
-const { hashPassword } = require('../utilities');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const {
-        name, username, email, password, isAdmin,
+        name,
+        username,
+        email,
+        password,
     } = req.body;
-    if (!(name && username && email && password && isAdmin)) {
-        return res.status(400).send({
-            message: 'name, username, email, password, is_admin required.',
-        });
-    }
 
-    try {
-        const usr = await User.create({
-            name, username, email, password, isAdmin,
-        });
-        return res.send(usr);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+    const user = await User.create({
+        name,
+        username,
+        email,
+        password,
+    });
+    return res.send(user);
+});
 
-const findAll = async (req, res) => {
-    try {
-        const usr = await User.findAll();
-        return res.send(usr);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const user = await User.findAll();
+    return res.send(user);
+});
 
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const usr = await User.findByPk(id);
-
-        if (!usr) {
-            return res.status(404).send({
-                message: `User with id ${id} not found`,
-            });
-        }
-        return res.send(usr);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const user = await User.findByPk(id);
+    if (!user) {
+        throw new AppError('User not found', 404);
     }
-};
+    return res.send(user);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body;
+    const {
+        name,
+        username,
+        email,
+        password,
+    } = req.body;
 
-    if (!(name)) {
-        return res.status(400).send({
-            message: 'New name required.',
-        });
+    const user = await User.findByPk(id);
+    if (!user) {
+        throw new AppError('User not found', 404);
     }
 
-    try {
-        const usr = await User.findByPk(id);
+    await user.update({
+        name,
+        username,
+        email,
+        password,
+    });
+    return res.send(user);
+});
 
-        if (!usr) {
-            return res.status(404).send({
-                message: `User with id ${id} not found`,
-            });
-        }
-        usr.name = name;
-        usr.save();
-        return res.send(usr);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const usr = await User.findByPk(id);
-
-        if (!usr) {
-            return res.status(404).send({
-                message: `User with id ${id} not found`,
-            });
-        }
-        await usr.destroy();
-        return res.send(usr);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const user = await User.findByPk(id);
+    if (!user) {
+        throw new AppError('User not found', 404);
     }
-};
 
-const login = async (req, res) => {
+    await user.destroy();
+    return res.send(user);
+});
+
+const login = catchAsync(async (req, res) => {
     const { username, password } = req.body;
 
     if (!(username && password)) {
-        return res.status(400).send({
-            message: 'Username and password are required.',
-        });
+        throw new AppError('Username and Password are required', 400);
     }
 
-    try {
-        const user = await User.findOne({
-            where: {
-                username,
-            },
-        });
-        if (!user) {
-            return res.status(404).send({
-                message: `User with username ${username} not found`,
-            });
-        }
-        const genHash = await hashPassword(password, user.salt);
-        if (genHash === user.password) {
-            return res.send('login successful');
-        }
-        return res.status(404).send({
-            message: 'Username or Password is wrong',
-        });
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const user = await User.findOne({
+        where: { username },
+    });
+    if (!(user && user.validatePassword(password))) {
+        throw new AppError('Username or Password is wrong', 401);
     }
-};
+
+    return res.send('login successful');
+});
 
 module.exports = {
     create,

@@ -29,6 +29,10 @@ const SampleFile = db.define('SampleFile', {
     location: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        validate: {
+            notEmpty: true,
+            len: [2, 255],
+        },
     },
     remarks: {
         type: DataTypes.TEXT,

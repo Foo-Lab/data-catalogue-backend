@@ -1,104 +1,72 @@
 const { SampleFile } = require('../models/index');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const {
-        sampleId, fileTypeId, location, remarks,
+        sampleId,
+        fileTypeId,
+        location,
+        remarks,
     } = req.body;
-    if (!(sampleId && fileTypeId && location && remarks)) {
-        return res.status(400).send({
-            message: 'sampleId, fileTypeId, location, remarks required.',
-        });
-    }
 
-    try {
-        const sf = await SampleFile.create({
-            sampleId, fileTypeId, location, remarks,
-        });
-        return res.send(sf);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+    const file = await SampleFile.create({
+        sampleId,
+        fileTypeId,
+        location,
+        remarks,
+    });
+    return res.send(file);
+});
 
-const findAll = async (req, res) => {
-    try {
-        const sf = await SampleFile.findAll();
-        return res.send(sf);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const file = await SampleFile.findAll();
+    return res.send(file);
+});
 
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const sf = await SampleFile.findByPk(id);
-
-        if (!sf) {
-            return res.status(404).send({
-                message: `Sample File with id ${id} not found`,
-            });
-        }
-        return res.send(sf);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const file = await SampleFile.findByPk(id);
+    if (!file) {
+        throw new AppError('Sample File not found', 404);
     }
-};
+    return res.send(file);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { location } = req.body;
+    const {
+        sampleId,
+        fileTypeId,
+        location,
+        remarks,
+    } = req.body;
 
-    if (!location) {
-        return res.status(400).send({
-            message: 'New location required.',
-        });
+    const file = await SampleFile.findByPk(id);
+    if (!file) {
+        throw new AppError('Sample File not found', 404);
     }
 
-    try {
-        const sf = await SampleFile.findByPk(id);
+    await file.update({
+        sampleId,
+        fileTypeId,
+        location,
+        remarks,
+    });
+    return res.send(file);
+});
 
-        if (!sf) {
-            return res.status(404).send({
-                message: `Sample File with id ${id} not found`,
-            });
-        }
-        sf.location = location;
-        sf.save();
-        return res.send(sf);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const sf = await SampleFile.findByPk(id);
-
-        if (!sf) {
-            return res.status(404).send({
-                message: `Sample File with id ${id} not found`,
-            });
-        }
-        await sf.destroy();
-        return res.send(sf);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const file = await SampleFile.findByPk(id);
+    if (!file) {
+        throw new AppError('Sample File not found', 404);
     }
-};
+
+    await file.destroy();
+    return res.send(file);
+});
 
 module.exports = {
     create,

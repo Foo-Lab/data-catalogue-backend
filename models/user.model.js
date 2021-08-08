@@ -1,7 +1,7 @@
+const bcrypt = require('bcrypt');
 const { DataTypes } = require('sequelize');
 
 const db = require('../config/database');
-const { generateSalt, hashPassword } = require('../utilities');
 
 const User = db.define('User', {
     id: {
@@ -12,34 +12,54 @@ const User = db.define('User', {
     name: {
         type: DataTypes.STRING(50),
         allowNull: false,
+        validate: {
+            notEmpty: true,
+            len: [3, 50],
+        },
     },
     username: {
         type: DataTypes.STRING(20),
         allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: true,
+            len: [3, 20],
+        },
     },
     email: {
         type: DataTypes.STRING(50),
         allowNull: false,
-    },
-    salt: {
-        type: DataTypes.STRING(32),
-        allowNull: true,
+        unique: true,
+        validate: {
+            notEmpty: true,
+            len: [3, 50],
+            isEmail: true,
+        },
     },
     password: {
-        type: DataTypes.STRING(128),
-        allowNull: true,
+        type: DataTypes.STRING(60),
+        allowNull: false,
+        validate: {
+            notEmpty: true,
+            len: [5, 25],
+        },
     },
     isAdmin: {
         type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
+        validate: {
+            isBoolean: true,
+        },
     },
 });
 
 User.beforeCreate(async (user) => {
-    const salt = generateSalt();
-    const hash = await hashPassword(user.password, salt);
-    user.password = hash;
-    user.salt = salt;
+    user.password = await bcrypt.hash(user.password, 8);
 });
+
+User.prototype.validatePassword = function comparePassword(password) {
+    return bcrypt.compareSync(password, this.password);
+};
 
 module.exports = User;

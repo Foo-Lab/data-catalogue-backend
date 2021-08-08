@@ -1,102 +1,56 @@
 const { Status } = require('../models/index');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const { name } = req.body;
-    if (!(name)) {
-        return res.status(400).send({
-            message: 'name required.',
-        });
-    }
 
-    try {
-        const st = await Status.create({
-            name,
-        });
-        return res.send(st);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+    const status = await Status.create({
+        name,
+    });
+    return res.send(status);
+});
 
-const findAll = async (req, res) => {
-    try {
-        const st = await Status.findAll();
-        return res.send(st);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const status = await Status.findAll();
+    return res.send(status);
+});
 
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const st = await Status.findByPk(id);
-
-        if (!st) {
-            return res.status(404).send({
-                message: `Status with id ${id} not found`,
-            });
-        }
-        return res.send(st);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const status = await Status.findByPk(id);
+    if (!status) {
+        throw new AppError('Status not found', 404);
     }
-};
+    return res.send(status);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body; // just put name first, since thrs nth
+    const { name } = req.body;
 
-    if (!name) {
-        return res.status(400).send({
-            message: 'New name required.',
-        });
+    const status = await Status.findByPk(id);
+    if (!status) {
+        throw new AppError('Status not found', 404);
     }
 
-    try {
-        const st = await Status.findByPk(id);
+    await status.update({
+        name,
+    });
+    return res.send(status);
+});
 
-        if (!st) {
-            return res.status(404).send({
-                message: `Status with id ${id} not found`,
-            });
-        }
-        st.name = name;
-        st.save();
-        return res.send(st);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const st = await Status.findByPk(id);
-
-        if (!st) {
-            return res.status(404).send({
-                message: `Status with id ${id} not found`,
-            });
-        }
-        await st.destroy();
-        return res.send(st);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const status = await Status.findByPk(id);
+    if (!status) {
+        throw new AppError('Status not found', 404);
     }
-};
+
+    await status.destroy();
+    return res.send(status);
+});
 
 module.exports = {
     create,

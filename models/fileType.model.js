@@ -8,8 +8,13 @@ const FileType = db.define('FileType', {
         autoIncrement: true,
     },
     name: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(25),
         allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: true,
+            len: [2, 25],
+        },
     },
 });
 

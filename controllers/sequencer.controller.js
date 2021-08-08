@@ -1,102 +1,56 @@
 const { Sequencer } = require('../models/index');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const { name } = req.body;
-    if (!name) {
-        return res.status(400).send({
-            message: 'name required.',
-        });
-    }
 
-    try {
-        const seq = await Sequencer.create({
-            name,
-        });
-        return res.send(seq);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+    const seq = await Sequencer.create({
+        name,
+    });
+    return res.send(seq);
+});
 
-const findAll = async (req, res) => {
-    try {
-        const seq = await Sequencer.findAll();
-        return res.send(seq);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const seq = await Sequencer.findAll();
+    return res.send(seq);
+});
 
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const seq = await Sequencer.findByPk(id);
-
-        if (!seq) {
-            return res.status(404).send({
-                message: `Sequencer with id ${id} not found`,
-            });
-        }
-        return res.send(seq);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const seq = await Sequencer.findByPk(id);
+    if (!seq) {
+        throw new AppError('Sequencer not found', 404);
     }
-};
+    return res.send(seq);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (!name) {
-        return res.status(400).send({
-            message: 'New name required.',
-        });
+    const seq = await Sequencer.findByPk(id);
+    if (!seq) {
+        throw new AppError('Sequencer not found', 404);
     }
 
-    try {
-        const seq = await Sequencer.findByPk(id);
+    await seq.update({
+        name,
+    });
+    return res.send(seq);
+});
 
-        if (!seq) {
-            return res.status(404).send({
-                message: `Sequencer with id ${id} not found`,
-            });
-        }
-        seq.name = name;
-        seq.save();
-        return res.send(seq);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const seq = await Sequencer.findByPk(id);
-
-        if (!seq) {
-            return res.status(404).send({
-                message: `Sequencer with id ${id} not found`,
-            });
-        }
-        await seq.destroy();
-        return res.send(seq);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const seq = await Sequencer.findByPk(id);
+    if (!seq) {
+        throw new AppError('Sequencer not found', 404);
     }
-};
+
+    await seq.destroy();
+    return res.send(seq);
+});
 
 module.exports = {
     create,

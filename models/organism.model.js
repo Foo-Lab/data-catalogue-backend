@@ -8,8 +8,13 @@ const Organism = db.define('Organism', {
         autoIncrement: true,
     },
     name: {
-        type: DataTypes.STRING(15),
+        type: DataTypes.STRING(25),
         allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: true,
+            len: [2, 25],
+        },
     },
 });
 

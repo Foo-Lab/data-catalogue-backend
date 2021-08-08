@@ -1,12 +1,15 @@
 const { Sample } = require('../models/index');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const {
         experimentId,
         userId,
         statusId,
-        date, code,
+        date,
+        code,
         name,
+        description,
         organismId,
         tissue,
         condition,
@@ -14,128 +17,104 @@ const create = async (req, res) => {
         sequencingTypeId,
         sequencerId,
         sequencingProviderId,
+        sra,
+        remarks,
     } = req.body;
-    if (!(
-        experimentId
-        && userId
-        && statusId
-        && date
-        && code
-        && name
-        && organismId
-        && tissue
-        && condition
-        && treatment
-        && sequencing_typeId
-        && sequencerId
-        && sequencing_providerId
-    )) {
-        return res.status(400).send({
-            message: 'experimentId, userId, statusId, date, code, name, organismId, tissue, condition, treatment, sequencing_typeId, sequencerId and sequencing_providerId required.',
-        });
-    }
 
-    try {
-        const sam = await Sample.create({
-            experimentId,
-            userId,
-            statusId,
-            date,
-            code,
-            name,
-            organismId,
-            tissue,
-            condition,
-            treatment,
-            sequencingTypeId,
-            sequencerId,
-            sequencingProviderId,
-        });
-        return res.send(sam);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+    const sample = await Sample.create({
+        experimentId,
+        userId,
+        statusId,
+        date,
+        code,
+        name,
+        description,
+        organismId,
+        tissue,
+        condition,
+        treatment,
+        sequencingTypeId,
+        sequencerId,
+        sequencingProviderId,
+        sra,
+        remarks,
+    });
+    return res.send(sample);
+});
 
-const findAll = async (req, res) => {
-    try {
-        const sam = await Sample.findAll();
-        return res.send(sam);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const sample = await Sample.findAll();
+    return res.send(sample);
+});
 
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const sam = await Sample.findByPk(id);
-
-        if (!sam) {
-            return res.status(404).send({
-                message: `Sample with id ${id} not found`,
-            });
-        }
-        return res.send(sam);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const sample = await Sample.findByPk(id);
+    if (!sample) {
+        throw new AppError('Sample not found', 404);
     }
-};
+    return res.send(sample);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { code } = req.body;
+    const {
+        experimentId,
+        userId,
+        statusId,
+        date,
+        code,
+        name,
+        description,
+        organismId,
+        tissue,
+        condition,
+        treatment,
+        sequencingTypeId,
+        sequencerId,
+        sequencingProviderId,
+        sra,
+        remarks,
+    } = req.body;
 
-    if (!code) {
-        return res.status(400).send({
-            message: 'New code required.',
-        });
+    const sample = await Sample.findByPk(id);
+    if (!sample) {
+        throw new AppError('Sample not found', 404);
     }
 
-    try {
-        const sam = await Sample.findByPk(id);
+    await sample.update({
+        experimentId,
+        userId,
+        statusId,
+        date,
+        code,
+        name,
+        description,
+        organismId,
+        tissue,
+        condition,
+        treatment,
+        sequencingTypeId,
+        sequencerId,
+        sequencingProviderId,
+        sra,
+        remarks,
+    });
+    return res.send(sample);
+});
 
-        if (!sam) {
-            return res.status(404).send({
-                message: `Sample with id ${id} not found`,
-            });
-        }
-        sam.code = code;
-        sam.save();
-        return res.send(sam);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const sam = await Sample.findByPk(id);
-
-        if (!sam) {
-            return res.status(404).send({
-                message: `Sample with id ${id} not found`,
-            });
-        }
-        await sam.destroy();
-        return res.send(sam);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const sample = await Sample.findByPk(id);
+    if (!sample) {
+        throw new AppError('Sample not found', 404);
     }
-};
+
+    await sample.destroy();
+    return res.send(sample);
+});
 
 module.exports = {
     create,

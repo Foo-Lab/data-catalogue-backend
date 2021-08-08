@@ -8,8 +8,13 @@ const SequencingProvider = db.define('SequencingProvider', {
         autoIncrement: true,
     },
     name: {
-        type: DataTypes.STRING(25),
+        type: DataTypes.STRING(50),
         allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: true,
+            len: [2, 50],
+        },
     },
 });
 

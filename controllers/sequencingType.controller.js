@@ -1,102 +1,56 @@
 const { SequencingType } = require('../models/index');
+const { catchAsync, AppError } = require('../utils');
 
-const create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
     const { name } = req.body;
-    if (!name) {
-        return res.status(400).send({
-            message: 'name required.',
-        });
-    }
 
-    try {
-        const seqt = await SequencingType.create({
-            name,
-        });
-        return res.send(seqt);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+    const seqType = await SequencingType.create({
+        name,
+    });
+    return res.send(seqType);
+});
 
-const findAll = async (req, res) => {
-    try {
-        const seqt = await SequencingType.findAll();
-        return res.send(seqt);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
+const findAll = catchAsync(async (req, res) => {
+    const seqType = await SequencingType.findAll();
+    return res.send(seqType);
+});
 
-const findOne = async (req, res) => {
+const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const seqt = await SequencingType.findByPk(id);
-
-        if (!seqt) {
-            return res.status(404).send({
-                message: `Seqeuncing Type with id ${id} not found`,
-            });
-        }
-        return res.send(seqt);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const seqType = await SequencingType.findByPk(id);
+    if (!seqType) {
+        throw new AppError('Sequencing Type not found', 404);
     }
-};
+    return res.send(seqType);
+});
 
-const update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body; // just put name first, since thrs nth
+    const { name } = req.body;
 
-    if (!name) {
-        return res.status(400).send({
-            message: 'New name required.',
-        });
+    const seqType = await SequencingType.findByPk(id);
+    if (!seqType) {
+        throw new AppError('Sequencing Type not found', 404);
     }
 
-    try {
-        const seqt = await SequencingType.findByPk(id);
+    await seqType.update({
+        name,
+    });
+    return res.send(seqType);
+});
 
-        if (!seqt) {
-            return res.status(404).send({
-                message: `Sequencing Type with id ${id} not found`,
-            });
-        }
-        seqt.name = name;
-        seqt.save();
-        return res.send(seqt);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
-    }
-};
-
-const remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    try {
-        const seqt = await SequencingType.findByPk(id);
-
-        if (!seqt) {
-            return res.status(404).send({
-                message: `Sequencing Type with id ${id} not found`,
-            });
-        }
-        await seqt.destroy();
-        return res.send(seqt);
-    } catch (error) {
-        return res.status(500).send({
-            message: `Unable to connect to the database: ${error}`,
-        });
+    const seqType = await SequencingType.findByPk(id);
+    if (!seqType) {
+        throw new AppError('Sequencing Type not found', 404);
     }
-};
+
+    await seqType.destroy();
+    return res.send(seqType);
+});
 
 module.exports = {
     create,
