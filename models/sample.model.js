@@ -40,7 +40,7 @@ const Sample = db.define('Sample', {
         },
     },
     date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
             isDate: true,
@@ -99,7 +99,7 @@ const Sample = db.define('Sample', {
             len: [2, 255],
         },
     },
-    sequecingTypeId: {
+    sequencingTypeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {

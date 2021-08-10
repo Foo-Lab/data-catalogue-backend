@@ -1,4 +1,6 @@
-const { Sample } = require('../models/index');
+const {
+    Sample, Experiment, User, Status, Organism, SequencingType, Sequencer, SequencingProvider,
+} = require('../models/index');
 const { catchAsync, AppError } = require('../utils');
 
 const create = catchAsync(async (req, res) => {
@@ -43,14 +45,22 @@ const create = catchAsync(async (req, res) => {
 });
 
 const findAll = catchAsync(async (req, res) => {
-    const sample = await Sample.findAll();
+    const sample = await Sample.findAll({
+        include: [
+            Experiment, User, Status, Organism, SequencingType, Sequencer, SequencingProvider,
+        ],
+    });
     return res.send(sample);
 });
 
 const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    const sample = await Sample.findByPk(id);
+    const sample = await Sample.findByPk(id, {
+        include: [
+            Experiment, User, Status, Organism, SequencingType, Sequencer, SequencingProvider,
+        ],
+    });
     if (!sample) {
         throw new AppError('Sample not found', 404);
     }

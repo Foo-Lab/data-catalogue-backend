@@ -1,4 +1,4 @@
-const { Experiment } = require('../models/index');
+const { Experiment, User } = require('../models/index');
 const { catchAsync, AppError } = require('../utils');
 
 const create = catchAsync(async (req, res) => {
@@ -21,14 +21,18 @@ const create = catchAsync(async (req, res) => {
 });
 
 const findAll = catchAsync(async (req, res) => {
-    const exp = await Experiment.findAll();
+    const exp = await Experiment.findAll({
+        include: User,
+    });
     return res.send(exp);
 });
 
 const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
-    const exp = await Experiment.findByPk(id);
+    const exp = await Experiment.findByPk(id, {
+        include: User,
+    });
     if (!exp) {
         throw new AppError('Experiment not found', 404);
     }
