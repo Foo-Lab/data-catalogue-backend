@@ -19,8 +19,25 @@ const create = catchAsync(async (req, res) => {
 });
 
 const findAll = catchAsync(async (req, res) => {
-    const file = await SampleFile.findAll();
-    return res.send(file);
+    const { page, size } = req.query;
+
+    let options = {};
+    if (page && size) {
+        options = {
+            offset: ((page - 1) * size),
+            limit: parseInt(size, 10),
+        };
+    }
+
+    const file = await SampleFile.findAll(options);
+    const count = await SampleFile.count();
+
+    return res
+        .set({
+            'Access-Control-Expose-Headers': 'X-total-count',
+            'X-total-count': count,
+        })
+        .send(file);
 });
 
 const findOne = catchAsync(async (req, res) => {

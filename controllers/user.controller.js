@@ -79,10 +79,10 @@ const login = catchAsync(async (req, res) => {
         where: { username },
     });
     if (!(user && user.validatePassword(password))) {
-        throw new AppError('Username or Password is wrong', 401);
+        throw new AppError('Incorrect username or password', 401);
     }
 
-    return res.send('login successful');
+    return res.send(user);
 });
 
 module.exports = {

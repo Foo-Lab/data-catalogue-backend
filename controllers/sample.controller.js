@@ -45,12 +45,36 @@ const create = catchAsync(async (req, res) => {
 });
 
 const findAll = catchAsync(async (req, res) => {
+    const { page, size } = req.query;
+
+    let options = {};
+    if (page && size) {
+        options = {
+            offset: ((page - 1) * size),
+            limit: parseInt(size, 10),
+        };
+    }
+
     const sample = await Sample.findAll({
         include: [
-            Experiment, User, Status, Organism, SequencingType, Sequencer, SequencingProvider,
+            Experiment,
+            User,
+            Status,
+            Organism,
+            SequencingType,
+            Sequencer,
+            SequencingProvider,
         ],
+        ...options,
     });
-    return res.send(sample);
+    const count = await Sample.count();
+
+    return res
+        .set({
+            'Access-Control-Expose-Headers': 'X-total-count',
+            'X-total-count': count,
+        })
+        .send(sample);
 });
 
 const findOne = catchAsync(async (req, res) => {

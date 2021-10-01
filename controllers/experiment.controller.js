@@ -21,10 +21,28 @@ const create = catchAsync(async (req, res) => {
 });
 
 const findAll = catchAsync(async (req, res) => {
+    const { page, size } = req.query;
+
+    let options = {};
+    if (page && size) {
+        options = {
+            offset: ((page - 1) * size),
+            limit: parseInt(size, 10),
+        };
+    }
+
     const exp = await Experiment.findAll({
         include: User,
+        ...options,
     });
-    return res.send(exp);
+    const count = await Experiment.count();
+
+    return res
+        .set({
+            'Access-Control-Expose-Headers': 'X-total-count',
+            'X-total-count': count,
+        })
+        .send(exp);
 });
 
 const findOne = catchAsync(async (req, res) => {

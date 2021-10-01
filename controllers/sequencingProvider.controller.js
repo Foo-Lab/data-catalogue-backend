@@ -11,8 +11,25 @@ const create = catchAsync(async (req, res) => {
 });
 
 const findAll = catchAsync(async (req, res) => {
-    const seqProvider = await SequencingProvider.findAll();
-    return res.send(seqProvider);
+    const { page, size } = req.query;
+
+    let options = {};
+    if (page && size) {
+        options = {
+            offset: ((page - 1) * size),
+            limit: parseInt(size, 10),
+        };
+    }
+
+    const seqProvider = await SequencingProvider.findAll(options);
+    const count = await SequencingProvider.count();
+
+    return res
+        .set({
+            'Access-Control-Expose-Headers': 'X-total-count',
+            'X-total-count': count,
+        })
+        .send(seqProvider);
 });
 
 const findOne = catchAsync(async (req, res) => {
