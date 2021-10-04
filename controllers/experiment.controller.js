@@ -21,13 +21,25 @@ const create = catchAsync(async (req, res) => {
 });
 
 const findAll = catchAsync(async (req, res) => {
-    const { page, size } = req.query;
+    const {
+        page, size, sort, dir,
+    } = req.query;
 
     let options = {};
     if (page && size) {
         options = {
+            ...options,
             offset: ((page - 1) * size),
             limit: parseInt(size, 10),
+        };
+    }
+    if (sort && dir) {
+        options = {
+            ...options,
+            order:
+                sort.includes('.')
+                    ? [[sort.split('.')[0], sort.split('.')[1], dir]]
+                    : [[sort, dir]],
         };
     }
 
