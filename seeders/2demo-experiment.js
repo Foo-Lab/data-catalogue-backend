@@ -5,7 +5,7 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         return queryInterface.bulkInsert('Experiments', [
             {
-                userId: '1',
+                user_id: 1,
                 date: '2023-01-09',
                 code: 'EXPT-01',
                 name: 'experiment 1',
@@ -14,16 +14,16 @@ module.exports = {
                 updated_at: '2023-01-09 07:54:26',
             },
             {
-                userId: '1',
+                user_id: 1,
                 date: '2023-01-10',
                 code: 'EXPT-02',
                 name: 'experiment 2',
                 description: 'description of experiment 2',
-                created_at: '2023-01-10 07:54:26',
-                updated_at: '2023-01-10 07:54:26',
+                created_at: '2023-01-10 07:55:26',
+                updated_at: '2023-01-10 07:55:26',
             },
             {
-                userId: '2',
+                user_id: 2,
                 date: '2023-01-10',
                 code: 'EXPT-03',
                 name: 'experiment 3',
@@ -35,6 +35,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        return queryInterface.bulkDelete('Users', null, {});
+        return queryInterface.bulkDelete('Experiments', null, {});
     },
 };
