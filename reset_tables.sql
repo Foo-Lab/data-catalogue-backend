@@ -7,9 +7,9 @@ CREATE TABLE users(
     name VARCHAR(50) NOT NULL,
     username VARCHAR(20) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    salt CHAR(32) NOT NULL,
+    salt CHAR(60) NOT NULL,
     password CHAR(128) NOT NULL,
-    is_admin BOOLEAN NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT false,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -71,7 +71,7 @@ CREATE TABLE samples(
     name VARCHAR(100) NOT NULL,
     description TEXT NULL,
     tissue VARCHAR(100) NOT NULL,
-    conditions VARCHAR(255) NOT NULL, 
+    `condition` VARCHAR(255) NOT NULL, 
     treatment VARCHAR(255) NOT NULL,
     SRA CHAR(10) NOT NULL, 
     remarks TEXT NULL,
