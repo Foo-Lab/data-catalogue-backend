@@ -1,4 +1,5 @@
 'use strict';
+const { generatePassword } = require('../utils');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -8,7 +9,7 @@ module.exports = {
                 name: 'John Doe',
                 username: 'johndoe',
                 email: 'johndoe@gmail.com',
-                password: 'johndoepass',
+                password: await generatePassword('johndoepass', 8),
                 created_at: '2023-01-09 07:54:26',
                 updated_at: '2023-01-09 07:54:26',
             },
@@ -16,7 +17,7 @@ module.exports = {
                 name: 'Adam Tan',
                 username: 'adamtam',
                 email: 'adamtan@gmail.com',
-                password: 'adamtanpass',
+                password: await generatePassword('adamtanpass', 8),
                 created_at: '2023-01-09 07:54:26',
                 updated_at: '2023-01-09 07:54:26',
             },
