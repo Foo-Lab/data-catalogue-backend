@@ -40,6 +40,7 @@ const update = catchAsync(async (req, res) => {
         username,
         email,
         password,
+        isAdmin,
     } = req.body;
 
     const user = await User.findByPk(id);
@@ -52,6 +53,7 @@ const update = catchAsync(async (req, res) => {
         username,
         email,
         password,
+        isAdmin,
     });
     return res.send(user);
 });
