@@ -39,7 +39,7 @@ const update = catchAsync(async (req, res) => {
     if (!user) {
         throw new AppError('User not found', 404);
     }
-    if (req.body.isAdmin !== null) {
+    if (req.body.password !== undefined) {
         // manual update with postman
         const {
             name,
@@ -64,8 +64,9 @@ const update = catchAsync(async (req, res) => {
             email,
             currentPassword,
             newPassword,
+            isAdmin
         } = req.body;
-        const isAdmin = user.isAdmin;
+        const newIsAdmin = isAdmin === undefined ? user.isAdmin: isAdmin;
         // if currentPassword is correct, allow update. else throw 401 error
         if (!user.validatePassword(currentPassword)) {
             throw new AppError('Incorrect password', 401);
@@ -74,8 +75,8 @@ const update = catchAsync(async (req, res) => {
             name,
             username,
             email,
-            password: hashPassword(newPassword, user.salt),
-            isAdmin,
+            password: await hashPassword(newPassword, user.salt),
+            isAdmin: newIsAdmin,
         };
         await user.update(data);
     }
