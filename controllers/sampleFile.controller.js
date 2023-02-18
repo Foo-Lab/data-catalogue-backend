@@ -40,6 +40,15 @@ const findAll = catchAsync(async (req, res) => {
         .send(file);
 });
 
+const findBySampleId = catchAsync(async (req, res) => {
+    const { sampleId } = req.params;
+
+    const file = await SampleFile.findAll({
+        where: { sampleId },
+    });
+    return res.send(file);
+});
+
 const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
@@ -88,6 +97,7 @@ const remove = catchAsync(async (req, res) => {
 module.exports = {
     create,
     findAll,
+    findBySampleId,
     findOne,
     update,
     remove,
