@@ -1,4 +1,4 @@
-const { SampleFile } = require('../models/index');
+const { SampleFile, FileType } = require('../models/index');
 const { catchAsync, AppError } = require('../utils');
 
 const create = catchAsync(async (req, res) => {
@@ -45,6 +45,7 @@ const findBySampleId = catchAsync(async (req, res) => {
 
     const file = await SampleFile.findAll({
         where: { sampleId },
+        include: { FileType }
     });
     return res.send(file);
 });

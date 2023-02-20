@@ -14,6 +14,16 @@ module.exports = {
                 created_at: '2023-01-09 07:54:26',
                 updated_at: '2023-01-09 07:54:26',
             },
+            {
+                name: 'miSEQ',
+                created_at: '2023-01-09 07:54:26',
+                updated_at: '2023-01-09 07:54:26',
+            },
+            {
+                name: 'Oxford Nanopore',
+                created_at: '2023-01-09 07:54:26',
+                updated_at: '2023-01-09 07:54:26',
+            },
         ]);
     },
 
