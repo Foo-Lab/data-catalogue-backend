@@ -28,6 +28,7 @@ Sequencer.hasMany(Sample, { foreignKey: 'sequencerId' });
 SequencingProvider.hasMany(Sample, { foreignKey: 'sequencingProviderId' });
 
 FileType.hasMany(SampleFile, { foreignKey: 'fileTypeId' });
+SampleFile.belongsTo(FileType, { foreignKey: 'fileTypeId' });
 
 Sample.belongsTo(Experiment, { foreignKey: 'experimentId' });
 Sample.belongsTo(User, { foreignKey: 'userId' });

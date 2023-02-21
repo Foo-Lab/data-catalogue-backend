@@ -5,14 +5,16 @@ const create = catchAsync(async (req, res) => {
     const {
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     } = req.body;
 
     const file = await SampleFile.create({
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     });
     return res.send(file);
@@ -45,7 +47,7 @@ const findBySampleId = catchAsync(async (req, res) => {
 
     const file = await SampleFile.findAll({
         where: { sampleId },
-        include: { FileType }
+        include: FileType
     });
     return res.send(file);
 });
@@ -65,7 +67,8 @@ const update = catchAsync(async (req, res) => {
     const {
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     } = req.body;
 
@@ -77,7 +80,8 @@ const update = catchAsync(async (req, res) => {
     await file.update({
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     });
     return res.send(file);
