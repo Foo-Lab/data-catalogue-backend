@@ -77,6 +77,18 @@ const findAll = catchAsync(async (req, res) => {
         .send(sample);
 });
 
+const findByExptId = catchAsync(async (req, res) => {
+    const { experimentId } = req.params;
+
+    const sample = await Sample.findAll({
+        include: [
+            Experiment, User, Status, Organism, SequencingType, Sequencer, SequencingProvider,
+        ],
+        where: { experimentId },
+    });
+    return res.send(sample);
+});
+
 const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
@@ -154,6 +166,7 @@ module.exports = {
     create,
     findAll,
     findOne,
+    findByExptId,
     update,
     remove,
 };

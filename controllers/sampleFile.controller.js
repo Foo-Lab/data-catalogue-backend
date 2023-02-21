@@ -1,18 +1,20 @@
-const { SampleFile } = require('../models/index');
+const { SampleFile, FileType } = require('../models/index');
 const { catchAsync, AppError } = require('../utils');
 
 const create = catchAsync(async (req, res) => {
     const {
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     } = req.body;
 
     const file = await SampleFile.create({
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     });
     return res.send(file);
@@ -40,6 +42,16 @@ const findAll = catchAsync(async (req, res) => {
         .send(file);
 });
 
+const findBySampleId = catchAsync(async (req, res) => {
+    const { sampleId } = req.params;
+
+    const file = await SampleFile.findAll({
+        where: { sampleId },
+        include: FileType
+    });
+    return res.send(file);
+});
+
 const findOne = catchAsync(async (req, res) => {
     const { id } = req.params;
 
@@ -55,7 +67,8 @@ const update = catchAsync(async (req, res) => {
     const {
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     } = req.body;
 
@@ -67,7 +80,8 @@ const update = catchAsync(async (req, res) => {
     await file.update({
         sampleId,
         fileTypeId,
-        location,
+        locationUrl,
+        locationS3Url,
         remarks,
     });
     return res.send(file);
@@ -88,6 +102,7 @@ const remove = catchAsync(async (req, res) => {
 module.exports = {
     create,
     findAll,
+    findBySampleId,
     findOne,
     update,
     remove,

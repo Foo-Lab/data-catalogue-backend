@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS foolab;
 CREATE DATABASE foolab;
 USE foolab;
 

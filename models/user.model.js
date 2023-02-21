@@ -36,12 +36,20 @@ const User = db.define('User', {
             isEmail: true,
         },
     },
+    salt: {
+        type: DataTypes.CHAR(60),
+        default: null,
+        validate: {
+            notEmpty: true,
+            len: [5, 25],
+        },
+    },
     password: {
         type: DataTypes.STRING(60),
         allowNull: false,
         validate: {
             notEmpty: true,
-            len: [5, 25],
+            // len: [5, 25],
         },
     },
     isAdmin: {
@@ -55,7 +63,8 @@ const User = db.define('User', {
 });
 
 User.beforeCreate(async (user) => {
-    user.password = await bcrypt.hash(user.password, 8);
+    user.salt = await bcrypt.genSalt(8);
+    user.password = await bcrypt.hash(user.password, user.salt);
 });
 
 User.prototype.validatePassword = function comparePassword(password) {

@@ -1,5 +1,5 @@
 const { User } = require('../models/index');
-const { catchAsync, AppError } = require('../utils');
+const { catchAsync, AppError, hashPassword } = require('../utils');
 
 const create = catchAsync(async (req, res) => {
     const {
@@ -35,24 +35,52 @@ const findOne = catchAsync(async (req, res) => {
 
 const update = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const {
-        name,
-        username,
-        email,
-        password,
-    } = req.body;
-
     const user = await User.findByPk(id);
     if (!user) {
         throw new AppError('User not found', 404);
     }
-
-    await user.update({
-        name,
-        username,
-        email,
-        password,
-    });
+    if (req.body.password !== undefined) {
+        // manual update with postman
+        const {
+            name,
+            username,
+            email,
+            password,
+            isAdmin,
+        } = req.body;
+        const data = {
+                name,
+                username,
+                email,
+                password: await hashPassword(password, user.salt),
+                isAdmin,
+            };
+        await user.update(data);
+    } else {
+        // update from website
+        const {
+            name,
+            username,
+            email,
+            currentPassword,
+            newPassword,
+            isAdmin
+        } = req.body;
+        const newIsAdmin = isAdmin === undefined ? user.isAdmin: isAdmin;
+        // if currentPassword is correct, allow update. else throw 401 error
+        if (!user.validatePassword(currentPassword)) {
+            throw new AppError('Incorrect password', 401);
+        }
+        const data = {
+            name,
+            username,
+            email,
+            password: await hashPassword(newPassword, user.salt),
+            isAdmin: newIsAdmin,
+        };
+        await user.update(data);
+    }
+    
     return res.send(user);
 });
 

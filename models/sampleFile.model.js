@@ -26,7 +26,15 @@ const SampleFile = db.define('SampleFile', {
             key: 'id',
         },
     },
-    location: {
+    locationUrl: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        validate: {
+            notEmpty: true,
+            len: [2, 255],
+        },
+    },
+    locationS3Url: {
         type: DataTypes.STRING(255),
         allowNull: false,
         validate: {
