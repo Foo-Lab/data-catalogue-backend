@@ -33,6 +33,26 @@ const findOne = catchAsync(async (req, res) => {
     return res.send(user);
 });
 
+const checkUsernameExists = catchAsync(async (req, res) => {
+    const { username } = req.params;
+
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+        throw new AppError('User not found', 404);
+    }
+    return res.send(user);
+});
+
+const checkEmailExists = catchAsync(async (req, res) => {
+    const { email } = req.params;
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+        throw new AppError('User not found', 404);
+    }
+    return res.send(user);
+});
+
 const update = catchAsync(async (req, res) => {
     const { id } = req.params;
     const user = await User.findByPk(id);
@@ -49,12 +69,12 @@ const update = catchAsync(async (req, res) => {
             isAdmin,
         } = req.body;
         const data = {
-                name,
-                username,
-                email,
-                password: await hashPassword(password, user.salt),
-                isAdmin,
-            };
+            name,
+            username,
+            email,
+            password: await hashPassword(password, user.salt),
+            isAdmin,
+        };
         await user.update(data);
     } else {
         // update from website
@@ -66,7 +86,7 @@ const update = catchAsync(async (req, res) => {
             newPassword,
             isAdmin
         } = req.body;
-        const newIsAdmin = isAdmin === undefined ? user.isAdmin: isAdmin;
+        const newIsAdmin = isAdmin === undefined ? user.isAdmin : isAdmin;
         // if currentPassword is correct, allow update. else throw 401 error
         if (!user.validatePassword(currentPassword)) {
             throw new AppError('Incorrect password', 401);
@@ -80,7 +100,7 @@ const update = catchAsync(async (req, res) => {
         };
         await user.update(data);
     }
-    
+
     return res.send(user);
 });
 
@@ -117,6 +137,8 @@ module.exports = {
     create,
     findAll,
     findOne,
+    checkUsernameExists,
+    checkEmailExists,
     update,
     remove,
     login,
