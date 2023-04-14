@@ -2,7 +2,7 @@ class SequelizeError extends Error {
     constructor(error) {
         super(error.message);
 
-        this.statusCode = 422;
+        this.statusCode = (error.message === 'Validation error') ? 403 : 422;
         this.status = 'error';
         this.errors = error.errors;
 

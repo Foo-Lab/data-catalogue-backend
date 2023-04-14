@@ -8,5 +8,5 @@ module.exports = (app) => {
     app.get('/user/email/:email', user.checkEmailExists);
     app.put('/user/:id', user.update);
     app.delete('/user/:id', user.remove);
-    app.post('/user/login', user.login);
+    // app.post('/user/auth', user.auth);
 };

@@ -1,5 +1,7 @@
 const { User } = require('../models/index');
 const { catchAsync, AppError, hashPassword } = require('../utils');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const create = catchAsync(async (req, res) => {
     const {
@@ -116,23 +118,6 @@ const remove = catchAsync(async (req, res) => {
     return res.send(user);
 });
 
-const login = catchAsync(async (req, res) => {
-    const { username, password } = req.body;
-
-    if (!(username && password)) {
-        throw new AppError('Username and Password are required', 400);
-    }
-
-    const user = await User.findOne({
-        where: { username },
-    });
-    if (!(user && user.validatePassword(password))) {
-        throw new AppError('Incorrect username or password', 401);
-    }
-
-    return res.send(user);
-});
-
 module.exports = {
     create,
     findAll,
@@ -141,5 +126,5 @@ module.exports = {
     checkEmailExists,
     update,
     remove,
-    login,
+    // auth,
 };

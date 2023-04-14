@@ -3,14 +3,28 @@ const cors = require('cors');
 const { AppError } = require('./utils');
 require('dotenv').config();
 require('./config/database');
+const cookieParser = require('cookie-parser');
+const verifyAccessToken = require('./utils/verifyAccessToken');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: `http://${process.env.FRONTEND_URL}`,
+    credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// routes
+// middleware for parsing cookies
+app.use(cookieParser());
+
+// public routes
 app.get('/', (req, res) => res.send('test'));
+require('./routes/auth.routes')(app);
+require('./routes/refresh.routes')(app);
+
+app.use(verifyAccessToken);
+
+// routes protected by auth token
 require('./routes/user.routes')(app);
 require('./routes/status.routes')(app);
 require('./routes/organism.routes')(app);
