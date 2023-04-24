@@ -1,6 +1,6 @@
 .vscode/*
 node_modules/*
-seeders/*
+seeders/
 
 .env
 config.json
