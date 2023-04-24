@@ -47,7 +47,7 @@ const Sample = db.define('Sample', {
         },
     },
     code: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(50),
         allowNull: false,
         unique: true,
         validate: {
